@@ -4,17 +4,17 @@ import {Card, CardActions, CardHeader, CardMedia, Link, Typography } from "@mui/
 
 import Loading from "../Loading";
 
-function Category({ catID, title, image, }) {
+function Category({ catID, title, image}) {
 
     const [loading, setLoading] = useState(false);
 
-    const handleClick = (id) => {
-
+    const handleClick = (name) => {
+        //console.log(value);
         setLoading(true);
         setTimeout( () => {
             setLoading(false);
             // chuyển hướng trang web sang /category-details
-            window.location.href = `/category-details/${id}`;
+            window.location.href = `/category-details/${name}`;
         }, 2000); 
     }
 
@@ -28,11 +28,11 @@ function Category({ catID, title, image, }) {
                 sx={{width: '100%', height: '400px', mx: 'auto', cursor: 'pointer'}}
                 image={image}
                 alt={`image ${title}`}
-                onClick={() => handleClick(catID)}
+                onClick={() => handleClick(title)}
             />
             <CardActions disableSpacing >
                 <Link sx={{cursor: 'pointer', ":hover": {color: 'red'}}}>
-                    <Typography variant="h6" onClick={() => handleClick(catID)}>See more</Typography>
+                    <Typography variant="h6" onClick={() => handleClick(title)}>See more</Typography>
                 </Link>
             </CardActions>
             <Loading open={loading} />

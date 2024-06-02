@@ -1,39 +1,58 @@
+
+import axios from "axios";
+import { useState, useEffect } from "react";
 import * as React from 'react';
 import PropTypes from 'prop-types';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemText from '@mui/material/ListItemText';
 import Typography from '@mui/material/Typography';
+import { Box, Button, ButtonGroup } from '@mui/material';
+import AddIcon from '@mui/icons-material/Add';
+import RemoveIcon from '@mui/icons-material/Remove';
+import Loading from "~/components/containers/Loading";
+import { CartAPI } from "~/apis";
 
-function Info({ totalPrice }) {
+function Info({ totalPrice, products }) {
 
+  const [loading, setLoading] = useState(false);
+  const [number, setNumber] = useState(1);
 
-  const totalShip = 30000;
-  const totalInsurance = 300000;
-  const totalLicense = 1000000;
+  const [cart, setCart] = useState([]);
+  const jwt = JSON.parse(localStorage.getItem('jwt'));
+  
+  //console.log(products);
 
-  const products = [
+  const productss = [
     {
       name: 'Professional plan',
       desc: 'Shipping fee costs',
-      price: totalShip,
-    },
-    {
-      name: 'Dedicated support',
-      desc: 'Included in the Professional plan',
-      price: 'Free',
-    },
-    {
-      name: 'Hardware',
-      desc: 'insurance for products',
-      price: totalInsurance,
-    },
-    {
-      name: 'Landing page template',
-      desc: 'License',
-      price: totalLicense,
+      price: 'free',
     },
   ];  
+
+  // get all cart
+  const getAllCarts = async () => {
+    setLoading(true);
+    try {
+        const response = await axios.get('http://localhost:9090/api/v1/private/carts', {
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${jwt}`
+            }
+        });
+        setCart(response.data);
+        //console.log('Cart:', response.data);
+    } catch (err) {
+        console.log("Error getall:", err.message);
+    } finally {
+        setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    getAllCarts();
+  }, []);
 
   return (
     <React.Fragment>
@@ -44,7 +63,7 @@ function Info({ totalPrice }) {
         {totalPrice.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })}
       </Typography>
       <List disablePadding>
-        {products.map((product) => (
+        {productss.map((product) => (
           <ListItem key={product.name} sx={{ py: 1, px: 0 }}>
             <ListItemText
               sx={{ mr: 2 }}
@@ -57,6 +76,9 @@ function Info({ totalPrice }) {
           </ListItem>
         ))}
       </List>
+      
+      {/* other */}
+      <Loading open={loading} />
     </React.Fragment>
   );
 }

@@ -1,4 +1,5 @@
 
+import axios from 'axios';
 import { useEffect, useState } from "react";
 import { Box, Breadcrumbs, Button, Card, CardActions, CardContent, CardMedia, Dialog, DialogActions, DialogContent, DialogTitle, Link, Tooltip, Typography } from "@mui/material";
 import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart';
@@ -8,6 +9,7 @@ import FavoriteIcon from '@mui/icons-material/Favorite';
 
 import DATA_PRODUCT from "~/utils/content/Product";
 import Loading from "../Loading";
+import Images from '~/utils/Images';
 
 function ProductDetails({ children, id, name, ...props }) {
 
@@ -36,11 +38,25 @@ function ProductDetails({ children, id, name, ...props }) {
         localStorage.setItem(key, JSON.stringify(value));
     };
 
+    // 
+    const [products, setProducts] = useState([]);
+
+    const getAllProducts = async () => {
+        try{
+            const response = await axios.get(`http://localhost:9090/api/v1/public/products`);
+            setProducts(response.data.content);
+            // return response.data;
+        }catch(error){
+            alert(`Error fetching products: ${error}`);
+        }
+    }
+
     // useEffect để lưu wishlist vào localStorage khi nó thay đổi
     useEffect(() => {
         CheckLoginUser();
         saveToLocalStorage('wishlist', wishlist);
         saveToLocalStorage('yourCart', yourCart);
+        getAllProducts();
     }, [wishlist, yourCart]);
 
     // Hàm thêm sản phẩm vào wishlist 3
@@ -124,12 +140,12 @@ function ProductDetails({ children, id, name, ...props }) {
                 {children}
             </DialogTitle>
             <DialogContent>
-                {DATA_PRODUCT.map( (data, i) => {
+                {products.map( (data, i) => {
                     if(data.id === id){
                         return <Card sx={{ width: '100%', height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
                         <CardMedia
                             sx={{ height: '200px', objectFit: 'cover' }}
-                            image={data.img_src}
+                            image={data.images_url || Images.noImage}
                             title={`image ${data.name}`}
                         />
                         <CardContent sx={{ flexGrow: 1 }}>
@@ -171,7 +187,7 @@ function ProductDetails({ children, id, name, ...props }) {
                                 <Typography variant="body2" color="text.secondary" sx={{ textAlign: 'center', color: 'red', fontWeight: 'bold', my: 2 }}>
                                     __
                                 </Typography>
-                                {data.price.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })}
+                                {data.sell_price.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })}
                             </Typography>
                         </CardContent>
             
@@ -200,14 +216,28 @@ function ProductDetails({ children, id, name, ...props }) {
                                 </Button>
                             </Tooltip>
                         </CardActions>
+                        <Box sx={{width: '100%'}}>
+                            <Typography>
+                                <label>Supplier Name: {data.supplier_name}</label>
+                            </Typography>
+                            <Typography>
+                                <label>Category: {data.category.parent_name}</label>
+                            </Typography>
+                            <Typography>
+                                <label>Category Name: {data.category.name}</label>
+                            </Typography>
+                            <Typography>
+                                <label>Description: {data.description}</label>
+                            </Typography>
+                            <Typography>
+                                <label>Short Name: {data.short_name}</label>
+                            </Typography>
+                        </Box>
                     </Card>
+                    
                     }
                     return null;
                 })}
-
-                <Box>
-                    new update commingsoon
-                </Box>
             </DialogContent>
             <DialogActions>
                 {/* <Button 

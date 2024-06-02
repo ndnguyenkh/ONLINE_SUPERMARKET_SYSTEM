@@ -17,8 +17,9 @@ import MenuIcon from '@mui/icons-material/Menu';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import NotificationsIcon from '@mui/icons-material/Notifications';
 
-import { secondaryListItems } from '~/pages/Dashboard/ListItems'
+import SecondaryListItems from '~/pages/Dashboard/ListItems/secondaryListItems'
 import MainListItems from '~/pages/Dashboard/ListItems/mainListItems';
+import ToTop from '~/components/containers/ToTop';
 
 const drawerWidth = 240;
 
@@ -86,6 +87,7 @@ export default function DashboardLayout({children}) {
           <Toolbar
             sx={{
               pr: '24px', // keep right padding when drawer closed
+              backgroundColor: 'white',
             }}
           >
             <IconButton
@@ -98,20 +100,20 @@ export default function DashboardLayout({children}) {
                 ...(open && { display: 'none' }),
               }}
             >
-              <MenuIcon />
+              <MenuIcon sx={{color: 'black'}} />
             </IconButton>
             <Typography
               component="h1"
               variant="h6"
               color="inherit"
               noWrap
-              sx={{ flexGrow: 1 }}
+              sx={{ flexGrow: 1, color: 'black', fontWeight: 'bold' }}
             >
               Manage Admin OnMart 
             </Typography>
             <IconButton color="inherit">
-              <Badge badgeContent={4} color="secondary">
-                <NotificationsIcon />
+              <Badge badgeContent={0} color="secondary">
+                <NotificationsIcon sx={{color: 'gray'}} />
               </Badge>
             </IconButton>
           </Toolbar>
@@ -135,7 +137,7 @@ export default function DashboardLayout({children}) {
           <List component="nav">
             <MainListItems />
             <Divider sx={{ my: 1 }} />
-            {secondaryListItems}
+            <SecondaryListItems />
           </List>
         </Drawer>
 
@@ -143,6 +145,8 @@ export default function DashboardLayout({children}) {
         {children}
            
       </Box>
+
+      <ToTop />
     </ThemeProvider>
   );
 }

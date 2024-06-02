@@ -1,5 +1,6 @@
 
 import * as React from 'react';
+import { useEffect, useState } from 'react';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
@@ -31,6 +32,27 @@ const defaultTheme = createTheme();
 
 function Dashboard() {
 
+  const [role, setRole] = useState('');
+  // chuyển hướng page theo roles
+  const getRedirectPath = (authority) => {
+    switch (authority) {
+      case 'CUSTOMER': {
+        return window.location.href = ('/profile');
+      }
+      case 'ADMIN':
+      case 'WAREHOUSE_STAFFS':
+      case 'SELLER':
+        return window.location.href = ('/dashboard');
+      default:
+        return window.location.href = ('/login'); // Hoặc trang khác nếu không xác định được vai trò
+    }
+};
+
+  useEffect(() => {
+    //setRole(JSON.parse(localStorage.getItem('role')));
+    //getRedirectPath(role);
+
+  }, []);
 
   return (
     <ThemeProvider theme={defaultTheme}>

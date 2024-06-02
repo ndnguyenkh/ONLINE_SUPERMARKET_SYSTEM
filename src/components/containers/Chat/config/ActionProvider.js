@@ -4,11 +4,11 @@ import React from 'react';
 
 const ActionProvider = ({ createChatBotMessage, setState, children }) => {
 
-  const handleWhatAI = () => {
-    const message = createChatBotMessage("AI is new temchology in 2024");
-    //setChatBotMessage(message);
-    setState((prev) => ({ ...prev, messages: [...prev.messages, message], })); 
-  }
+  // const handleWhatAI = () => {
+  //   const message = createChatBotMessage("AI is new temchology in 2024");
+  //   //setChatBotMessage(message);
+  //   setState((prev) => ({ ...prev, messages: [...prev.messages, message], })); 
+  // }
 
   //
   const handleDog = () => {
@@ -31,22 +31,16 @@ const ActionProvider = ({ createChatBotMessage, setState, children }) => {
     updateState(botMessage);
   }
 
-  const handleJavascriptQuiz = () => {
-    const message = createChatBotMessage(
-      "Fantastic. Here is your quiz. Good luck!",
-      {
-        widget: "javascriptQuiz",
-      }
-    );
+  // const handleJavascriptQuiz = () => {
+  //   const message = createChatBotMessage(
+  //     "Fantastic. Here is your quiz. Good luck!",
+  //     {
+  //       widget: "javascriptQuiz",
+  //     }
+  //   );
 
-    updateState(message);
-  };
-
-  // 
-  const testAction = () => {
-    const message = createChatBotMessage('hello...');
-    updateState(message);
-  };
+  //   updateState(message);
+  // };
 
   const handleOnMart = () => {
     const message = createChatBotMessage(
@@ -54,6 +48,26 @@ const ActionProvider = ({ createChatBotMessage, setState, children }) => {
     );
     updateState(message);
   };
+
+  // 
+  const handleResponse = (response) => {
+    const message = createChatBotMessage(response);
+    updateState(message);
+  }
+
+  //
+  const handleResponseError = (error) => {
+    const message = createChatBotMessage(`sorry your ${error} question is beyond my understanding!.`);
+    updateState(message);
+  }
+
+  //
+  const handleMusic = () => {
+    const message = createChatBotMessage("Here's your music player!", {
+      widget: 'musicPlayer',
+    });
+    updateState(message);
+  }
 
   // update state
   const updateState = (message) => {
@@ -68,12 +82,12 @@ const ActionProvider = ({ createChatBotMessage, setState, children }) => {
       {React.Children.map(children, (child) => {
         return React.cloneElement(child, {
           actions: {
-            handleWhatAI,
             handleDog,
-            handleJavascriptQuiz,
-            testAction,
+            handleOnMart,
             handleCategoryPicture,
-            handleOnMart
+            handleResponse,
+            handleMusic,
+            handleResponseError
           },
         });
       })}

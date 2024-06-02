@@ -2,17 +2,37 @@
 import { useState } from "react";
 import { Backdrop, Box, Button, CircularProgress, Container, TextField, Typography } from "@mui/material";
 import CheckIcon from '@mui/icons-material/Check';
+import axios from "axios";
 
 
 function ForgotPassword() {
 
     // ui template
     const [openBackdrop, setOpenBackdrop] = useState(false);
+    const jwt = JSON.parse(localStorage.getItem('jwt'));
 
     // variable actors
     const [email, setEmail] = useState('');
     const [errorEmail, setErrorEmail] = useState('');
     const [validEmail, setValidEmail] = useState(false);
+
+    const resetPassword = async () => {
+        const data = {
+            
+        };
+        try {
+            const response = await axios.post("http://localhost:9090/api/v1/login/reset-password-request", data, {
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${jwt}`
+                }
+            });
+            alert(response.data);
+        } catch (error) {
+            console.log("forget: " + error);
+        }
+    };
+
 
     const checkValidEmail = () => {
         // check email
@@ -37,10 +57,11 @@ function ForgotPassword() {
         setOpenBackdrop(true);
 
         setTimeout( () => {
+           if(checkValidEmail()){
+                resetPassword();
+           } 
+            
             setOpenBackdrop(false);
-
-            //
-            checkValidEmail();
         }, 2000);
     }
 

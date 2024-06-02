@@ -1,3 +1,4 @@
+import axios from "axios";
 import { useEffect, useState } from "react";
 import { Box, Button, Card, CardActions, CardContent, CardMedia, Tooltip, Typography } from "@mui/material";
 import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart';
@@ -9,6 +10,7 @@ import CloseIcon from '@mui/icons-material/Close';
 
 import Loading from "../Loading";
 import ProductDetails from "../ProductDetails";
+import { CartAPI } from "~/apis";
 
 function Product({ id, name, image, shortDescription, price }) {
 
@@ -16,20 +18,78 @@ function Product({ id, name, image, shortDescription, price }) {
     const [openDialog, setOpenDialog] = useState(false);
     const [loginUser, setLoginUser] = useState(false);
 
+    const [cart, setCart] = useState([]);
+    const jwt = JSON.parse(localStorage.getItem('jwt'));
+
+    // create cart
+    const createCart = async (product_id) => {
+        const data = {
+            product_id: product_id
+        };
+        setLoading(true);
+        try {
+            const response = await axios.post(CartAPI.create, data, {
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${jwt}`
+                }
+            });
+            alert("Cart created!: " + response.data.id);
+            window.location.reload();
+        } catch (err) {
+            console.log("Error creating: " + err.message);
+            alert("Cart un created!");
+        } finally {
+            setLoading(false);
+        }
+    }
+
+    // remove cart
+    const removeCart = async (product_id) => {
+        setLoading(true);
+        try {
+            const response = await axios.delete(`${CartAPI.remove}${product_id}`, {
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${jwt}`
+                }
+            });
+            alert("Cart removed!" + response.data.id);
+        } catch (err) {
+            console.log("Error removing: " + err.message);
+            alert("Cart un removed!");
+        } finally {
+            setLoading(false);
+        }
+    }
+
+    // get all cart
+    const getAllCarts = async () => {
+        setLoading(true);
+        try {
+            const response = await axios.get('http://localhost:9090/api/v1/private/carts', {
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${jwt}`
+                }
+            });
+            setCart(response.data);
+            console.log('Cart:', response.data);
+        } catch (err) {
+            console.log("Error getall:", err.message);
+        } finally {
+            setLoading(false);
+        }
+    };
+
     // Sử dụng state để lưu wishlist và lấy dữ liệu từ localStorage khi khởi tạo 1
     const [wishlist, setWishlist] = useState(() => {
         const savedWishlist = localStorage.getItem('wishlist');
         return savedWishlist ? JSON.parse(savedWishlist) : [];
     });
 
-    // your card
-    const [yourCart, setYourCart] = useState(() => {
-        const savedYourCart = localStorage.getItem('yourCart');
-        return savedYourCart ? JSON.parse(savedYourCart) : [];
-    });
-
     const [isInWishlist, setIsInWishlist] = useState(wishlist.includes(id));
-    const [isYourCart, setIsYourCart] = useState(yourCart.includes(id));
+    const [isYourCart, setIsYourCart] = useState(false);
 
     // Hàm lưu mảng vào localStorage 2
     const saveToLocalStorage = (key, value) => {
@@ -40,8 +100,17 @@ function Product({ id, name, image, shortDescription, price }) {
     useEffect(() => {
         CheckLoginUser();
         saveToLocalStorage('wishlist', wishlist);
-        saveToLocalStorage('yourCart', yourCart);
-    }, [wishlist, yourCart]);
+        
+    }, [wishlist]);
+
+    useEffect(() => {
+        const productInCart = cart.some(cartItem => cartItem.product_id === id);
+        setIsYourCart(productInCart);
+    }, [cart, id]);
+
+    useEffect(() => {
+        getAllCarts();
+    }, []);
 
     // Hàm thêm sản phẩm vào wishlist 3
     const handleAddWishlist = (productID) => {
@@ -61,35 +130,22 @@ function Product({ id, name, image, shortDescription, price }) {
         }else {
             window.location.href = ('/login');
         }
-        
-
         setLoading(true);
         setTimeout(() => {
             setLoading(false);
             window.location.reload();
         }, 1000);
     };
+    
 
     // Hàm thêm sản phẩm vào your cart 3
     const handleAddYourCart = (productID) => {
-        setYourCart((prevYourCart) => {
-            // Kiểm tra xem sản phẩm đã tồn tại trong wishlist chưa
-            if (prevYourCart.includes(productID)) {
-                // Nếu đã tồn tại, xóa sản phẩm khỏi wishlist
-                const newYourCart = prevYourCart.filter(item => item !== productID);
-                setIsYourCart(false);
-                return newYourCart;
-            }
-            // Nếu chưa tồn tại, thêm sản phẩm vào wishlist
-            setIsYourCart(true);
-            return [...prevYourCart, productID];
-        });
-
-        setLoading(true);
-        setTimeout(() => {
-            setLoading(false);
-            window.location.reload();
-        }, 1000);
+        const cartItem = cart.find(cartItem => cartItem.product_id === productID);
+        if (isYourCart) {
+            removeCart(cartItem.id);
+        } else {
+            createCart(productID);
+        }             
     };
 
     // show product details

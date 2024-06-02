@@ -1,4 +1,5 @@
 
+import axios from "axios";
 import React, { Fragment, useEffect, useState } from "react";
 import { AppBar, Box, Link, Button, Toolbar, Typography, Divider, Badge} from "@mui/material";
 import CloseIcon from '@mui/icons-material/Close';
@@ -14,7 +15,7 @@ import DrawerCart from "./DrawerCart";
 
 function Header() {
 
-    const [logged, setLogged] = useState(false);
+    //const [logged, setLogged] = useState(false);
 
     const [wishlist, setWishlist] = useState(() => {
         const savedWishlist = localStorage.getItem('wishlist');
@@ -22,13 +23,10 @@ function Header() {
     });
 
     // your card
-    const [yourCart, setYourCart] = useState(() => {
-        const savedYourCart = localStorage.getItem('yourCart');
-        return savedYourCart ? JSON.parse(savedYourCart) : [];
-    });
+    const [yourCart, setYourCart] = useState([]);
 
     const [numberBadgeWishlist, setNumberBadgeWishlist] = useState(wishlist.length);
-    const [numberBadgeYourCart, setNumberBadgeYourCart] = useState(yourCart.length);
+    // const [numberBadgeYourCart, setNumberBadgeYourCart] = useState(yourCart.length);
 
     const [openCart, setOpenCart] = useState(false);
     const [openListLike, setOpenListLike] = useState(false); // ds likes
@@ -71,7 +69,7 @@ function Header() {
             ) : (
                 <Fragment />
             )}
-            <Badge color="error" badgeContent={index === 2 ? numberBadgeYourCart : numberBadgeWishlist} sx={{display: index == 1 ? "none" : "block"}}>
+            <Badge color="error" badgeContent={index === 2 ? 0 : numberBadgeWishlist} sx={{display: index == 1 ? "none" : "block"}}>
                 {children}
             </Badge>
         </Button> 
@@ -80,10 +78,8 @@ function Header() {
 
     useEffect(() => {
         const savedWishlist = localStorage.getItem('wishlist');
-        const savedYourCart = localStorage.getItem('yourCart');
         setWishlist(savedWishlist ? JSON.parse(savedWishlist) : []);
         setNumberBadgeWishlist(savedWishlist ? JSON.parse(savedWishlist).length : 0);
-        setNumberBadgeYourCart(savedYourCart ? JSON.parse(savedYourCart).length : 0);
     }, []);
 
     return ( 

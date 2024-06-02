@@ -1,17 +1,6 @@
 import * as React from 'react';
-import { useEffect } from 'react';
-import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
-import Card from '@mui/material/Card';
-import CardContent from '@mui/material/CardContent';
-import CssBaseline from '@mui/material/CssBaseline';
-import Grid from '@mui/material/Grid';
-import Stack from '@mui/material/Stack';
-import Step from '@mui/material/Step';
-import StepLabel from '@mui/material/StepLabel';
-import Stepper from '@mui/material/Stepper';
-import Typography from '@mui/material/Typography';
-
+import { useEffect, useState } from 'react';
+import { Box, Button, Card, CardContent, Grid, Stack, Step, CssBaseline, StepLabel, Stepper, Typography } from '@mui/material';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 
 import ArrowBackRoundedIcon from '@mui/icons-material/ArrowBackRounded';
@@ -29,6 +18,8 @@ import Review from './Review';
 import Images from '~/utils/Images';
 import DATA_PRODUCT from '~/utils/content/Product';
 import { Link } from '@mui/material';
+import axios from 'axios';
+import { ProductAPI, UserAPI } from '~/apis';
 
 const steps = ['Shipping address', 'Payment details']; // , 'Review your order'
 
@@ -40,65 +31,223 @@ const logoStyle = {
   paddingTop: 5,
 };
 
-function getStepContent(step) {
-  switch (step) {
-    case 0:
-      return <AddressForm />;
-    case 1:
-      return <PaymentForm />;
-    // case 2:
-    //   return <Review />;
-    default:
-      throw new Error('Unknown step');
-  }
-}
-
 export default function Checkout() {
     
+  const [loading, setLoading] = useState(false);
   const [mode, setMode] = React.useState('light');
   const [showCustomTheme, setShowCustomTheme] = React.useState(true);
   const checkoutTheme = createTheme(getCheckoutTheme(mode));
   const defaultTheme = createTheme({ palette: { mode } });
   const [activeStep, setActiveStep] = React.useState(0);
-
+  // jwt
+  const jwt = JSON.parse(localStorage.getItem('jwt'));
+  // variables
   const [yourCart, setYourCart] = React.useState([]);
+  const [products, setProducts] = useState([]);
+  const [user, setUser] = useState({
+    email: '',
+    phone: '',
+    address: {
+      specific_address: ''
+    }
+  });
+  const [address, setAddress] = useState([]);
 
   // Lọc các sản phẩm trong giỏ hàng và tính tổng giá trị
-  const productsInCart = DATA_PRODUCT.filter(data => yourCart.includes(data.id));
+  // Lọc sản phẩm theo product_id có trong giỏ hàng
+  const productsInCart = products.filter(product => 
+    yourCart.some(cartItem => cartItem.product_id === product.id)
+  );
+  //const productsInCart = products.filter(data => yourCart.includes(data.id));
+  const [orderDetails, setOrderDetails] = useState([]); 
 
-  const totalPrice = productsInCart.reduce((total, product) => total + product.price, 0);
-  const totalShip = 30000;
-  const totalInsurance = 300000;
-  const totalLicense = 1000000;
-  const totalPriceNew = totalPrice + totalShip + totalInsurance + totalLicense;
+  // const formattedProductsInCart = productsInCart.map(product => ({
+  //   quantity: 2,
+  //   product_id: product.id
+  // }));
 
-  // Hàm lấy mảng từ localStorage
-  const loadFromLocalStorage = (key) => {
-    const savedYourCart = localStorage.getItem(key);
-    if (savedYourCart) {
-        return JSON.parse(savedYourCart);
+  const [total, setTotal] = useState(0);
+  const calculateTotal = () => {
+    let totalAmount = 0;
+    yourCart.forEach(cartItem => {
+      const product = products.find(p => p.id === cartItem.product_id);
+      if (product) {
+        totalAmount += cartItem.quantity * product.sell_price;
+      }
+    });
+    setTotal(totalAmount);
+  };
+
+  const totalPrice = total;
+  const totalPriceNew = totalPrice;
+
+  function getStepContent(step) {
+    switch (step) {
+      case 0:
+        return <AddressForm />;
+      case 1:
+        return <PaymentForm total={totalPrice}/>;
+      // case 2:
+      //   return <Review />;
+      default:
+        throw new Error('Unknown step');
     }
-    return [];
+  }
+
+  // getAllProducts
+  const getAllProducts = async () => {
+    try {
+      const response = await axios.get(ProductAPI.getAll, {
+        'Content-Type': 'application/json',
+        //  Authorization: `Bearer ${jwt}`
+      });
+      setProducts(response.data.content);
+    } catch (error) {
+      console.log(`${error.message}}`);
+    }
+  }
+
+  // get user
+  const getUser = async () => {
+    setLoading(true);
+    try {
+      const response = await axios.get(UserAPI.getUser, {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${jwt}`
+        }
+      });
+      setUser(response.data);
+    } catch (error) {
+      console.log(`Error: ${error.message}`);
+    } finally {
+      setLoading(false);
+    }
+  }; 
+
+  // get all cart
+  const getAllCarts = async () => {
+    setLoading(true);
+    try {
+        const response = await axios.get('http://localhost:9090/api/v1/private/carts', {
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${jwt}`
+            }
+        });
+        setYourCart(response.data);
+        //console.log('Cart:', response.data);
+    } catch (err) {
+        console.log("Error getall:", err.message);
+    } finally {
+        setLoading(false);
+    }
+  };
+
+  function loadOrders() {
+    const newOrderDetails = yourCart.map(cartItem => ({
+      quantity: cartItem.quantity,
+      product_id: cartItem.product_id
+    }));
+    return setOrderDetails(newOrderDetails);
+  }
+
+  const getAddressUser = async () => {
+    setLoading(true);
+    try {
+      const response = await axios.get(UserAPI.getAddress, {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${jwt}`
+        }
+      });
+      setAddress(response.data);
+    } catch (error) {
+      console.log(`Error: ${error.message}`);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // buy api
+  const buy = async () => {
+    loadOrders();
+    const userAddress = JSON.parse(localStorage.getItem('user_address'));
+
+    const data = {
+      note: "Contact before delivery",
+      loyalty_points_pay: user.loyaty_points,
+      delivery_fee: 0,
+      total_price: totalPriceNew,
+      delivery_address: userAddress ? userAddress : address[0].specific_address,
+      order_details: orderDetails
+    }
+    setLoading(true);
+    try {
+      const response = await axios.post(`${UserAPI.payment}?amount=${totalPrice}&bankCode=NCB`, data, {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${jwt}`
+        }
+      });
+      window.location.href = response.data.paymentUrl;
+      //alert("Payment success");
+    } catch (error) {
+      console.log(`Error: ${error.message}`);
+      alert("UN Payment success");
+      
+    } finally {
+      removeAccountFromLocalStorage("user_address");
+      setLoading(false);
+    }
+
   };
 
   useEffect(() => {
-    // const logged = JSON.parse(localStorage.getItem('logged'));
-    // if (logged) {
-    //     setLoginUser(true);
-    // }else {
-    //     setLoginUser(false);
-    // }
-    const storedYourCart = loadFromLocalStorage('yourCart');
-    setYourCart(storedYourCart);
+    getAllCarts();
+    getUser();
+    getAddressUser();
+    getAllProducts();
+    calculateTotal();
   }, []);
 
   const handleNext = () => {
-    setActiveStep(activeStep + 1);
+    if (activeStep === steps.length - 1) {
+      buy();
+      setActiveStep(activeStep + 1);
+    }else {
+      setActiveStep(activeStep + 1);
+    }
+    
   };
 
   const handleBack = () => {
     setActiveStep(activeStep - 1);
   };
+
+  // const handleChange = (e) => {
+  //   const { name, value } = e.target;
+  //   setUser(prevState => ({
+  //     ...prevState,
+  //     [name]: value
+  //   }));
+  // };
+
+  // const handleAddressChange = (e) => {
+  //   const { value } = e.target;
+  //   setUser(prevState => ({
+  //     ...prevState,
+  //     address: {
+  //       ...prevState.address,
+  //       specific_address: value
+  //     }
+  //   }));
+  // };
+
+  // Hàm xóa mảng vào localStorage 2
+  const removeAccountFromLocalStorage = (key) => {
+    localStorage.removeItem(key);
+  }; 
 
   return (
     <ThemeProvider theme={showCustomTheme ? checkoutTheme : defaultTheme}>
@@ -151,7 +300,7 @@ export default function Checkout() {
               maxWidth: 500,
             }}
           >
-            <Info totalPrice={activeStep >= 2 ? totalPriceNew : totalPrice} />
+            <Info totalPrice={activeStep >= 2 ? totalPriceNew : totalPrice} products={productsInCart} />
           </Box>
         </Grid>
         <Grid
@@ -387,10 +536,7 @@ export default function Checkout() {
           </Box>
         </Grid>
       </Grid>
-      {/* <ToggleCustomTheme
-        toggleCustomTheme={toggleCustomTheme}
-        showCustomTheme={showCustomTheme}
-      /> */}
+ 
     </ThemeProvider>
   );
 }

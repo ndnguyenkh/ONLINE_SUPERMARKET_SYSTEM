@@ -36,14 +36,14 @@ function Login() {
         if (email === '' || email === null) {
             setErrorEmail('Email is null or empty');
             console.log('Email is null or empty');
-            return;
+            return false;
         }
         // Kiểm tra email hợp lệ
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (!emailRegex.test(email)) {
             setErrorEmail('Invalid email format');
             console.log('Invalid email format');
-            return;
+            return false;
         }
         setErrorEmail('');
         setValidEmail(true);
@@ -52,20 +52,20 @@ function Login() {
         if (password === '' || password === null) {
             setErrorPassword('Password is null or empty');
             console.log('Password is null or empty');
-            return;
+            return false;
         }
         // Kiểm tra độ dài password
         if (password.length < 6) {
             setErrorPassword('Password must be at least 6 characters long');
             console.log('Password must be at least 6 characters long');
-            return;
+            return false;
         }
         // Kiểm tra password có ít nhất một chữ hoa, một con số, một kí tự đặc biệt
         const passwordRegex = /^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]+$/;
         if (!passwordRegex.test(password)) {
             setErrorPassword('Password must contain at least one uppercase letter, one digit, and one special character');
             console.log('Password must contain at least one uppercase letter, one digit, and one special character');
-            return;
+            return false;
         }
 
         setErrorPassword('');
@@ -73,6 +73,7 @@ function Login() {
 
         // Nếu tất cả điều kiện đều thỏa mãn
         console.log('Validation successful');
+        return true;
     }
 
     // Hàm lưu mảng vào localStorage 2
@@ -101,6 +102,7 @@ function Login() {
             authority = decodedToken.roles[0].authority;
             // save jwt to local storage
             addAccountToLocalStorage("jwt", jwt);
+            addAccountToLocalStorage("role", authority);
             // save information user to local storage
             addAccountToLocalStorage("user", decodedToken);
             getRedirectPath(authority);
@@ -173,14 +175,10 @@ function Login() {
 
         setTimeout( () => {
             setOpenBackdrop(false);
-
             //
-            checkNullValue();
-
-            //
-
-            handleSubmit();
-
+            if(checkNullValue()){
+                handleSubmit();
+            }
             //addAccountToLocalStorage("logged", true);
         }, 2000);
         // console.log(email);
@@ -214,19 +212,20 @@ function Login() {
         e.preventDefault();
     };
 
-    const handleLogout = () => {
-        setOpenBackdrop(true);
+    // const handleLogout = () => {
+    //     setOpenBackdrop(true);
 
-        setTimeout( () => {
+    //     setTimeout( () => {
 
-            removeAccountFromLocalStorage("logged");
-            removeAccountFromLocalStorage("user");
-            removeAccountFromLocalStorage("jwt");
-            setLoginUser(false);
+    //         removeAccountFromLocalStorage("logged");
+    //         removeAccountFromLocalStorage("user");
+    //         removeAccountFromLocalStorage("jwt");
+    //         removeAccountFromLocalStorage("role");
+    //         setLoginUser(false);
 
-            setOpenBackdrop(false);
-        }, 2000);
-    }
+    //         setOpenBackdrop(false);
+    //     }, 2000);
+    // }
 
     useEffect(() => {
         const logged = JSON.parse(localStorage.getItem('logged'));
@@ -235,22 +234,15 @@ function Login() {
         }else {
             setLoginUser(false);
         }
+        if(loginUser){
+            return window.location.href = ('/profile');
+        }
     }, []);
+
 
     return ( 
         <Box sx={{ my: 25, display: 'flex', justifyContent: 'center' }}>
-            {loginUser ? (
-                <Box>
-                    <Box sx={{mx: 'auto', textAlign: 'center', my: 15}}>   
-                        <Typography variant="h5">You are already logged in!</Typography>
-                        <Box sx={{my: 5}}>
-                            <Link onClick={handleLogout}>Logout</Link>
-                        </Box>
-                    </Box>
-                </Box>
-            ) : (
-                <>
-                <Box sx={{width: '520px', display: 'block', justifyContent: 'center'}}>
+            <Box sx={{width: '520px', display: 'block', justifyContent: 'center'}}>
                     <Container sx={{textAlign: 'center'}}>
                         <Typography variant="h4" sx={{fontWeight: 'bold'}}>LOGIN TO ONMART THE SUPER MARKET</Typography>
                         <Typography variant="h6" sx={{my: 2}}>Access your Super Market account.</Typography>
@@ -273,7 +265,7 @@ function Login() {
                                         sx={{width: '100%', pt: 2}}
                                         onChange={(e) => setEmail(e.target.value)}
                                     />
-                                    <label style={{fontStyle: 'italic', color: 'red'}}>{errorEmail}</label>
+                                    <label style={{fontStyle: 'italic', color: 'red'}}>{errorEmail}{generalError}</label>
                                 </Box>
                                 <Box>
                                     <label style={{fontWeight: 'bold'}}>PASSWORD
@@ -357,10 +349,6 @@ function Login() {
                         </form>
                     </Box>
                 </Box>
-
-                
-            </>
-            )}
             {/* backdrop */}
             <Loading open={openBackdrop} />
         </Box>

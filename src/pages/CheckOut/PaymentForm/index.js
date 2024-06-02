@@ -1,5 +1,7 @@
-import * as React from 'react';
 
+import * as React from 'react';
+import axios from 'axios';
+import { useEffect, useState } from 'react';
 import Alert from '@mui/material/Alert';
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
@@ -21,15 +23,22 @@ import WarningRoundedIcon from '@mui/icons-material/WarningRounded';
 
 import { styled } from '@mui/system';
 
+import Loading from '~/components/containers/Loading';
+import { UserAPI } from '~/apis';
+
+
 const FormGrid = styled('div')(() => ({
   display: 'flex',
   flexDirection: 'column',
 }));
 
-export default function PaymentForm() {
+export default function PaymentForm({total}) {
+
+  // ui
+  const [loading, setLoading] = useState(false);
   const [paymentType, setPaymentType] = React.useState('creditCard');
-  const [cardNumber, setCardNumber] = React.useState('');
-  const [cvv, setCvv] = React.useState('');
+  const [cardNumber, setCardNumber] = React.useState('NCB');
+  const [bankCode, setBankCode] = React.useState('NCB');
   const [expirationDate, setExpirationDate] = React.useState('');
 
   const handlePaymentTypeChange = (event) => {
@@ -44,20 +53,91 @@ export default function PaymentForm() {
     }
   };
 
+  // const handleCvvChange = (event) => {
+  //   const value = event.target.value.replace(/\D/g, '');
+  //   if (value.length <= 3) {
+  //     setCvv(value);
+  //   }
+  // };
   const handleCvvChange = (event) => {
-    const value = event.target.value.replace(/\D/g, '');
-    if (value.length <= 3) {
-      setCvv(value);
-    }
+    setBankCode(event.target.value);
   };
 
-  const handleExpirationDateChange = (event) => {
-    const value = event.target.value.replace(/\D/g, '');
-    const formattedValue = value.replace(/(\d{2})(?=\d{2})/, '$1/');
-    if (value.length <= 4) {
+  const handleExpirationDateChange = (eventOrDate) => {
+    let value;
+    if (eventOrDate instanceof Date) {
+      const date = eventOrDate;
+      const day = String(date.getDate()).padStart(2, '0');
+      const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are 0-based
+      const year = String(date.getFullYear()).slice(-2); // Last two digits of the year
+      value = `${day}/${month}/${year}`;
+    } else {
+      value = eventOrDate.target.value.replace(/\D/g, '');
+    }
+
+    const formattedValue = value.replace(/(\d{2})(?=\d{2})/, '$1/').replace(/(\d{2})(?=\d{2})/, '$1/');
+    if (value.length <= 8) {
       setExpirationDate(formattedValue);
     }
   };
+
+  // information user
+  // jwt
+  const jwt = JSON.parse(localStorage.getItem('jwt'));
+
+  // variable
+  const [user, setUser] = useState({
+    email: '',
+    phone: '',
+    address: {
+      specific_address: ''
+    }
+  });
+
+  // get user
+  const getUser = async () => {
+    setLoading(true);
+    try {
+      const response = await axios.get(UserAPI.getUser, {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${jwt}`
+        }
+      });
+      setUser(response.data);
+    } catch (error) {
+      console.log(`Error: ${error.message}`);
+    } finally {
+      setLoading(false);
+    }
+  }; 
+  
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setUser(prevState => ({
+      ...prevState,
+      [name]: value
+    }));
+  };
+
+  const handleAddressChange = (e) => {
+    const { value } = e.target;
+    setUser(prevState => ({
+      ...prevState,
+      address: {
+        ...prevState.address,
+        specific_address: value
+      }
+    }));
+  };
+
+  useEffect(() => {
+    const fetchData = async () => {
+      await getUser();
+      handleExpirationDateChange(new Date());
+    };
+    fetchData();
+  }, []);
 
   return (
     <Stack spacing={{ xs: 3, sm: 6 }} useFlexGap>
@@ -87,7 +167,7 @@ export default function PaymentForm() {
             <CardActionArea onClick={() => setPaymentType('creditCard')}>
               <CardContent sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                 <CreditCardRoundedIcon color="primary" fontSize="small" />
-                <Typography fontWeight="medium">Card</Typography>
+                <Typography fontWeight="medium">NCB</Typography>
               </CardContent>
             </CardActionArea>
           </Card>
@@ -106,7 +186,7 @@ export default function PaymentForm() {
             <CardActionArea onClick={() => setPaymentType('bankTransfer')}>
               <CardContent sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                 <AccountBalanceRoundedIcon color="primary" fontSize="small" />
-                <Typography fontWeight="medium">Bank account</Typography>
+                <Typography fontWeight="medium">ZALOPAY</Typography>
               </CardContent>
             </CardActionArea>
           </Card>
@@ -120,7 +200,7 @@ export default function PaymentForm() {
             gap: 2,
           }}
         >
-          <Box
+          {/* <Box
             sx={{
               display: 'flex',
               flexDirection: 'column',
@@ -134,9 +214,10 @@ export default function PaymentForm() {
               backgroundColor: 'background.paper',
               boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.05)',
             }}
-          >
-            <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-              <Typography variant="subtitle2">Credit card</Typography>
+          >  */}
+          {/* visa */}
+            {/* <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+              <Typography variant="subtitle2">VNPAY</Typography>
               <CreditCardRoundedIcon sx={{ color: 'text.secondary' }} />
             </Box>
             <SimCardRoundedIcon
@@ -145,8 +226,8 @@ export default function PaymentForm() {
                 transform: 'rotate(90deg)',
                 color: 'text.secondary',
               }}
-            />
-            <Box
+            /> */}
+            {/* <Box
               sx={{
                 display: 'flex',
                 justifyContent: 'space-between',
@@ -156,41 +237,42 @@ export default function PaymentForm() {
             >
               <FormGrid sx={{ flexGrow: 1 }}>
                 <FormLabel htmlFor="card-number" required>
-                  Card number
+                  CARD NAME
                 </FormLabel>
                 <OutlinedInput
                   id="card-number"
                   autoComplete="card-number"
                   placeholder="0000 0000 0000 0000"
                   required
-                  value={cardNumber}
-                  onChange={handleCardNumberChange}
+                  value={user.first_name + " " + user.last_name}
+                  //onChange={handleCardNumberChange}
                 />
               </FormGrid>
               <FormGrid sx={{ maxWidth: '20%' }}>
                 <FormLabel htmlFor="cvv" required>
-                  CVV
+                  BANK CODE
                 </FormLabel>
                 <OutlinedInput
                   id="cvv"
                   autoComplete="CVV"
                   placeholder="123"
                   required
-                  value={cvv}
+                  value={bankCode}
                   onChange={handleCvvChange}
                 />
               </FormGrid>
-            </Box>
-            <Box sx={{ display: 'flex', gap: 2 }}>
+            </Box> */}
+            {/* <Box sx={{ display: 'flex', gap: 2 }}>
               <FormGrid sx={{ flexGrow: 1 }}>
                 <FormLabel htmlFor="card-name" required>
-                  Name
+                  EMAIL
                 </FormLabel>
                 <OutlinedInput
                   id="card-name"
                   autoComplete="card-name"
                   placeholder="John Smith"
                   required
+                  value={user.email}
                 />
               </FormGrid>
               <FormGrid sx={{ flexGrow: 1 }}>
@@ -200,18 +282,14 @@ export default function PaymentForm() {
                 <OutlinedInput
                   id="card-expiration"
                   autoComplete="card-expiration"
-                  placeholder="MM/YY"
+                  placeholder="DD/MM/YY"
                   required
                   value={expirationDate}
                   onChange={handleExpirationDateChange}
                 />
               </FormGrid>
-            </Box>
-          </Box>
-          <FormControlLabel
-            control={<Checkbox name="saveCard" />}
-            label="Remember credit card details for next time"
-          />
+            </Box> */}
+          {/* </Box> */}
         </Box>
       )}
 
@@ -224,40 +302,12 @@ export default function PaymentForm() {
           }}
         >
           <Alert severity="warning" icon={<WarningRoundedIcon />}>
-            Your order will be processed once we receive the funds.
+            The function is temporarily not supported.
           </Alert>
-          <Typography variant="subtitle1" fontWeight="medium">
-            Bank account
-          </Typography>
-          <Typography variant="body1" gutterBottom>
-            Please transfer the payment to the bank account details shown below.
-          </Typography>
-          <Box sx={{ display: 'flex', gap: 1 }}>
-            <Typography variant="body1" color="text.secondary">
-              Bank:
-            </Typography>
-            <Typography variant="body1" fontWeight="medium">
-              Mastercredit
-            </Typography>
-          </Box>
-          <Box sx={{ display: 'flex', gap: 1 }}>
-            <Typography variant="body1" color="text.secondary">
-              Account number:
-            </Typography>
-            <Typography variant="body1" fontWeight="medium">
-              123456789
-            </Typography>
-          </Box>
-          <Box sx={{ display: 'flex', gap: 1 }}>
-            <Typography variant="body1" color="text.secondary">
-              Routing number:
-            </Typography>
-            <Typography variant="body1" fontWeight="medium">
-              987654321
-            </Typography>
-          </Box>
         </Box>
       )}
+
+      <Loading open={loading} />
     </Stack>
   );
 }

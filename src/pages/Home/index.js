@@ -1,5 +1,6 @@
 
-import { useState } from "react";
+import axios from 'axios';
+import { useEffect, useState } from "react";
 import { Box, Button, Container, Grid, Typography } from "@mui/material";
 
 import Loading from "~/components/containers/Loading";
@@ -8,10 +9,27 @@ import Category from "~/components/containers/Category";
 
 // data
 import DATA_CATEGORY from "~/utils/content/Category";
+import { CategoryAPI } from "~/apis";
 
 function Home() {
 
+    const [categories, setCategories] = useState([]);
     const [openBackdrop, setOpenBackdrop] = useState(false);
+
+    const getAllCategories =  async () => {
+        try{
+            const response = await axios.get(CategoryAPI.getAll);
+            setCategories(response.data);
+            // return response.data;
+        }catch(error){
+
+            //alert(`Error fetching parent categories: ${error}`);
+        }
+    }
+
+    useEffect(() => {
+        getAllCategories();
+    }, []);
 
     const handleClickToLogin = () => {
         setOpenBackdrop(true); 
@@ -77,12 +95,19 @@ function Home() {
             
             <Box sx={{backgroundColor: 'white', mx: 2}}>
                 <Grid container spacing={2}>
-                    {DATA_CATEGORY.map( (data, i) => {
+                    {categories === undefined ?  (
+                        <></>
+                    ) : (
+                        <>
+                        {categories.map( (data) => {
                       
-                      return <Grid item xs={12} md={3} key={i}>
-                            <Category title={data.name} image={data.ctg_img_src} catID={data.id}/>
-                        </Grid>
-                    } )}
+                            return <Grid item xs={12} md={3} key={data.id}>
+                                    <Category title={data.name} image={data.image_url} catID={data.id} />
+                                </Grid>
+                        })}
+                        </>
+                    )}
+                    
                 </Grid>
             </Box>
             {/* end Category */}

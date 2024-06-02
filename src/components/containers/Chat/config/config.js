@@ -6,6 +6,7 @@ import { createChatBotMessage, createCustomMessage } from 'react-chatbot-kit';
 import Options from '../resource/Option';
 import DogPicture from '../resource/DogPicture';
 import CategoryPicture from '../resource/CategoryPicture';
+import MusicPlayer from '../resource/MusicPlayer';
 
 const botName = "OnMart AI";
 const customMessage = createCustomMessage('value to input', 'custom');
@@ -88,6 +89,10 @@ const config = {
       widgetName: 'options',
       widgetFunc: (props) => <Options {...props} />,
     },
+    {
+      widgetName: 'musicPlayer',
+      widgetFunc: (props) => <MusicPlayer {...props} url="https://youtu.be/h5_yQ6oP4Bo?si=0fn2JXCx_hkaFwdn" />,
+    }
   ],
 };
 

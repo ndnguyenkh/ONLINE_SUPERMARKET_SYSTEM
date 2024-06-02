@@ -10,6 +10,7 @@ import ChatOutlinedIcon from '@mui/icons-material/ChatOutlined';
 import config from "./config/config";
 import MessageParser from "./config/MessageParser";
 import ActionProvider from "./config/ActionProvider";
+import MusicPlayer from "./resource/MusicPlayer";
 
 
 function Chat() {
@@ -62,6 +63,7 @@ function Chat() {
                         messageParser={MessageParser}
                         actionProvider={ActionProvider}
                     />
+                    {/* <MusicPlayer url="https://youtu.be/h5_yQ6oP4Bo?si=0fn2JXCx_hkaFwdn" /> */}
                 </Box>
             )}
             {/* button show chat */}

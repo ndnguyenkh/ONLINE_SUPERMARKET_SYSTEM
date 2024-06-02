@@ -6,7 +6,13 @@ import ListItemText from '@mui/material/ListItemText';
 import ListSubheader from '@mui/material/ListSubheader';
 import AssignmentIcon from '@mui/icons-material/Assignment';
 
-const secondaryListItems = (
+const SecondaryListItems = () => {
+
+  const handleListItemClick = (path) => {
+    window.location.href = (path);
+  };
+
+  return (
     <React.Fragment>
       <ListSubheader component="div" inset>
         Saved reports
@@ -15,21 +21,22 @@ const secondaryListItems = (
         <ListItemIcon>
           <AssignmentIcon />
         </ListItemIcon>
-        <ListItemText primary="Current month" />
+        <ListItemText primary="Manage Stock" onClick={() => handleListItemClick('/manage-stock')} />
       </ListItemButton>
-      <ListItemButton>
+      {/* <ListItemButton>
         <ListItemIcon>
           <AssignmentIcon />
         </ListItemIcon>
-        <ListItemText primary="Last quarter" />
-      </ListItemButton>
-      <ListItemButton>
+        <ListItemText primary="Last quarter" onClick={() => handleListItemClick('/dashboard')} />
+      </ListItemButton> */}
+      {/* <ListItemButton>
         <ListItemIcon>
           <AssignmentIcon />
         </ListItemIcon>
         <ListItemText primary="Year-end sale" />
-      </ListItemButton>
+      </ListItemButton> */}
     </React.Fragment>
   );
+}
 
-  export default secondaryListItems;
+export default SecondaryListItems;

@@ -1,4 +1,5 @@
 import * as React from 'react';
+import DynamicFeedIcon from '@mui/icons-material/DynamicFeed';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
@@ -8,67 +9,72 @@ import PeopleIcon from '@mui/icons-material/People';
 import BarChartIcon from '@mui/icons-material/BarChart';
 import LayersIcon from '@mui/icons-material/Layers';
 
+// files
+
+
 const MainListItems = () => {
 
-  const [selectedIndex, setSelectedIndex] = React.useState(0);
-
-  const handleListItemClick = (index, path) => {
-    setSelectedIndex(index);
+  const handleListItemClick = (path) => {
     window.location.href = (path);
   };
 
   return (
     <React.Fragment>
-      <ListItemButton
-        selected={selectedIndex === 0}
-        onClick={() => handleListItemClick(0, '/dashboard')}
-        style={{ color: selectedIndex === 0 ? 'red' : 'inherit' }}
+
+      <ListItemButton      
+        onClick={() => handleListItemClick('/dashboard')}
       >
-        <ListItemIcon style={{ color: selectedIndex === 0 ? 'red' : 'inherit' }}>
+        <ListItemIcon>
           <DashboardIcon />
         </ListItemIcon>
         <ListItemText primary="Dashboard" />
       </ListItemButton>
+
       <ListItemButton
-        selected={selectedIndex === 1}
-        onClick={() => handleListItemClick(1, '/manage-orders')}
-        style={{ color: selectedIndex === 1 ? 'red' : 'inherit' }}
+        onClick={() => handleListItemClick('/manage-orders')}
       >
-        <ListItemIcon style={{ color: selectedIndex === 1 ? 'red' : 'inherit' }}>
+        <ListItemIcon>
           <ShoppingCartIcon />
         </ListItemIcon>
         <ListItemText primary="Manage Orders" />
       </ListItemButton>
+
       <ListItemButton
-        selected={selectedIndex === 2}
-        onClick={() => handleListItemClick(2, '/manage-accounts')}
-        style={{ color: selectedIndex === 2 ? 'red' : 'inherit' }}
+        onClick={() => handleListItemClick('/manage-accounts')}
       >
-        <ListItemIcon style={{ color: selectedIndex === 2 ? 'red' : 'inherit' }}>
+        <ListItemIcon>
           <PeopleIcon />
         </ListItemIcon>
-        <ListItemText primary="Manage Accounts" />
+        <ListItemText primary="Manage Users" />
       </ListItemButton>
+
       <ListItemButton
-        selected={selectedIndex === 3}
-        onClick={() => handleListItemClick(3, '/manage-categories')}
-        style={{ color: selectedIndex === 3 ? 'red' : 'inherit' }}
+        onClick={() => handleListItemClick('/manage-categories')}
       >
-        <ListItemIcon style={{ color: selectedIndex === 3 ? 'red' : 'inherit' }}>
+        <ListItemIcon>
           <BarChartIcon />
         </ListItemIcon>
         <ListItemText primary="Manage Categories" />
       </ListItemButton>
+
       <ListItemButton
-        selected={selectedIndex === 4}
-        onClick={() => handleListItemClick(4, '/manage-products')}
-        style={{ color: selectedIndex === 4 ? 'red' : 'inherit' }}
+        onClick={() => handleListItemClick('/manage-products')}
       >
-        <ListItemIcon style={{ color: selectedIndex === 4 ? 'red' : 'inherit' }}>
+        <ListItemIcon>
           <LayersIcon />
         </ListItemIcon>
         <ListItemText primary="Manage Products" />
       </ListItemButton>
+
+      <ListItemButton
+        onClick={() => handleListItemClick('/manage-providers')}
+      >
+        <ListItemIcon>
+          <DynamicFeedIcon />
+        </ListItemIcon>
+        <ListItemText primary="Manage Suppliers" />
+      </ListItemButton>
+
     </React.Fragment>
   );
 };
