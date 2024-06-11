@@ -8,5 +8,6 @@ const ProviderAPI = {
     create: localhost + auth + '/private/suppliers',
     update: localhost + auth + '/private/suppliers/',
     findById: localhost + auth + '/public/suppliers/',
+    delete: localhost + auth + '/private/suppliers/',
 };
 export default ProviderAPI;

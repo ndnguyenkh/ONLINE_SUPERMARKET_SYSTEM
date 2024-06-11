@@ -16,6 +16,7 @@ import DrawerCart from "./DrawerCart";
 function Header() {
 
     //const [logged, setLogged] = useState(false);
+    const logged = JSON.parse(localStorage.getItem('logged'));
 
     const [wishlist, setWishlist] = useState(() => {
         const savedWishlist = localStorage.getItem('wishlist');
@@ -139,7 +140,7 @@ function Header() {
                         <Button sx={{ width: {xs: '80px', md: 'auto'}, height: "100%", color: 'black', fontWeight: 'bold' }}>
                             <Link href='/login' underline="none" sx={{display: 'flex', alignItems: 'center', color: 'black'}}>
                                 <Typography variant="h7" sx={{display: {xs: 'none', md: 'flex'}}}>
-                                    {ContentHeader.contentButtonAccount}
+                                    {logged ? ContentHeader.contentButtonAccount : <>Login</>}
                                 </Typography>
                                 {ContentHeader.contentButtonAccountIcon}
                             </Link>

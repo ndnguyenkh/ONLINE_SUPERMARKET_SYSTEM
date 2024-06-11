@@ -19,10 +19,11 @@ import React from 'react';
             { inputs: lowercase },
             {
               headers: {
-                'Authorization': `Bearer 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`,
+                'Authorization': `Bearer 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`,
               },
             }
           );
+          
           const text = response.data[0].generated_text;
           actions.handleResponse(text);
         } catch (error) {
@@ -31,9 +32,9 @@ import React from 'react';
         }
       }
 
-      // if(lowercase.includes('category' || 'categories')){
-      //   actions.handleCategoryPicture();
-      // }
+      if(lowercase.includes('category')  || lowercase.includes('categories')){
+        actions.handleCategoryPicture();
+      }
 
       // if(lowercase.includes('product' || 'product')){
       //   actions.handleCategoryPicture();

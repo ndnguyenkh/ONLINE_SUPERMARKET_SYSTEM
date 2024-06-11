@@ -16,10 +16,14 @@ import Link from '@mui/material/Link';
 import MenuIcon from '@mui/icons-material/Menu';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import NotificationsIcon from '@mui/icons-material/Notifications';
+import PermContactCalendarIcon from '@mui/icons-material/PermContactCalendar';
 
 import SecondaryListItems from '~/pages/Dashboard/ListItems/secondaryListItems'
 import MainListItems from '~/pages/Dashboard/ListItems/mainListItems';
 import ToTop from '~/components/containers/ToTop';
+import { Button } from '@mui/material';
+import Image from '~/components/Image';
+import Images from '~/utils/Images';
 
 const drawerWidth = 240;
 
@@ -71,6 +75,7 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
 const defaultTheme = createTheme();
 
 export default function DashboardLayout({children}) {
+  const [model, setModel] = React.useState(false);
   const [open, setOpen] = React.useState(true);
   const toggleDrawer = () => {
     setOpen(!open);
@@ -100,6 +105,7 @@ export default function DashboardLayout({children}) {
                 ...(open && { display: 'none' }),
               }}
             >
+              
               <MenuIcon sx={{color: 'black'}} />
             </IconButton>
             <Typography
@@ -111,11 +117,7 @@ export default function DashboardLayout({children}) {
             >
               Manage Admin OnMart 
             </Typography>
-            <IconButton color="inherit">
-              <Badge badgeContent={0} color="secondary">
-                <NotificationsIcon sx={{color: 'gray'}} />
-              </Badge>
-            </IconButton>
+            
           </Toolbar>
         </AppBar>
 
@@ -128,8 +130,9 @@ export default function DashboardLayout({children}) {
               justifyContent: 'flex-end',
               px: [1],
             }}
-          >
+          ><Link href="/dashboard" sx={{display: 'flex', alignItems: 'center', color: 'black', textDecoration: 'none'}}><Image alt="" src={Images.logo} style={{width: '80px', height: '80px'}} /> OnMart</Link>
             <IconButton onClick={toggleDrawer}>
+            
               <ChevronLeftIcon />
             </IconButton>
           </Toolbar>

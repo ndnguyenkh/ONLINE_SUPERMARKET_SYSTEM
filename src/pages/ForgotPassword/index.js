@@ -18,16 +18,16 @@ function ForgotPassword() {
 
     const resetPassword = async () => {
         const data = {
-            
+            email: email
         };
         try {
-            const response = await axios.post("http://localhost:9090/api/v1/login/reset-password-request", data, {
+            await axios.post("http://localhost:9090/api/v1/login/reset-password-request", data, {
                 headers: {
                     'Content-Type': 'application/json',
-                    Authorization: `Bearer ${jwt}`
+                    //Authorization: `Bearer ${jwt}`
                 }
             });
-            alert(response.data);
+            alert("Successfully!, please check your email!");
         } catch (error) {
             console.log("forget: " + error);
         }
@@ -40,17 +40,19 @@ function ForgotPassword() {
         if (email === '' || email === null) {
             setErrorEmail('Email is null or empty');
             console.log('Email is null or empty');
-            return;
+            return false;
         }
         // Kiểm tra email hợp lệ
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (!emailRegex.test(email)) {
             setErrorEmail('Invalid email format');
             console.log('Invalid email format');
-            return;
+            return false;
         }
         setErrorEmail('');
         setValidEmail(true);
+
+        return true;
     }
 
     const handleClickForgotPassword = () => {

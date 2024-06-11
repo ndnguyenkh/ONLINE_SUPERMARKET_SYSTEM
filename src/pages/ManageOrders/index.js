@@ -24,6 +24,7 @@ import SearchIcon from '@mui/icons-material/Search';
 import ManageHistoryIcon from '@mui/icons-material/ManageHistory';
 import Loading from "~/components/containers/Loading";
 import { OrdersAPI } from "~/apis";
+import DashboardOrder from "./Dashboard";
 
 const ManageOrders = () => {
   const [loading, setLoading] = useState(false);
@@ -67,6 +68,7 @@ const ManageOrders = () => {
       getAllOrders();
       handleCloseModal();
     } catch (err) {
+      alert("Change Password Success!");
       console.log("Error updating state:", err.message);
       setError("Failed to update order state.");
     } finally {
@@ -104,6 +106,9 @@ const ManageOrders = () => {
           <Typography variant="h5" sx={{ fontWeight: 'bold', color: 'gray' }}>Manage Orders</Typography>
           <Link href="/manage-orders"><ManageHistoryIcon sx={{ color: 'green' }} /></Link>
         </Container>
+
+        <DashboardOrder />
+
         <Box>
           <Paper
             component="form"
@@ -165,7 +170,7 @@ const ManageOrders = () => {
                     </ol>
                   </TableCell>
                   <TableCell align="center">
-                    <Button onClick={() => handleOpenModal(row)}>Change State</Button>
+                    <Button sx={{display: row.state === "CANCELED" ? 'none' : 'flex'}} onClick={() => handleOpenModal(row)}>Change State</Button>
                   </TableCell>
                 </TableRow>
               ))}

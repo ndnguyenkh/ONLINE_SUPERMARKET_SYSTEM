@@ -20,5 +20,6 @@ const UserAPI = {
     getAllUsers: localhost + auth + '/public/users',
     lock: localhost + auth + '/private/users/lock/',
     unLock: localhost + auth + '/private/users/unlock/',
+    updateByAdmin: localhost + auth + '/private/users/',
 };
 export default UserAPI;

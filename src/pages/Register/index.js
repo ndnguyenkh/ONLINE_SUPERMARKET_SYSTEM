@@ -116,7 +116,7 @@ function Register() {
             return false;
         }
         // Kiểm tra password có ít nhất một chữ hoa, một con số, một kí tự đặc biệt
-        const passwordRegex = /^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]+$/;
+        const passwordRegex = /^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&+#])[A-Za-z\d@$!%*?&+#]{6,}$/;
         if (!passwordRegex.test(password)) {
             setErrorPassword('Password must contain at least one uppercase letter, one digit, and one special character');
             console.log('Password must contain at least one uppercase letter, one digit, and one special character');

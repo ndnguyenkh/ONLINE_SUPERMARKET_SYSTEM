@@ -1,7 +1,7 @@
 import axios from 'axios';
 import * as React from 'react';
 import { useState, useEffect } from 'react';
-import { Box, Button, Grid, IconButton, Input, InputAdornment, Link, Modal, TextField, Typography } from "@mui/material";
+import { Box, Button, Divider, Grid, IconButton, Input, InputAdornment, Link, Modal, TextField, Typography } from "@mui/material";
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 
@@ -80,6 +80,7 @@ function Profile() {
                 alert("Edit User Success!");
                 getUser(); // Fetch updated user data
             } catch (err) {
+                alert("Change Password Success!");
                 console.log("update user: " + err.message);
                 setError("Failed to update user information. Please try again.");
             } finally {
@@ -107,6 +108,7 @@ function Profile() {
                 setOldPassword('');
                 setNewPassword('');
             } catch (err) {
+                alert("failed action! Please check and try again!");
                 console.log("Change Password: " + err.message);
                 setError("Failed to change password. Please try again.");
             } finally {
@@ -184,20 +186,21 @@ function Profile() {
             removeAccountFromLocalStorage("jwt");
             removeAccountFromLocalStorage("role");
             //setLoginUser(false);
-
+        
+            window.location.href = ('/login')
             setLoading(false);
         }, 2000);
     }
 
     return (
         <Box>
-            <Box sx={{ display: 'flex', mx: 40, mt: 10, justifyContent: 'center', border: '1px solid gray', borderRadius: '10px' }}>
+            <Box sx={{ display: 'flex', mx: 40, mt: 10, justifyContent: 'center', border: '1px solid gray', borderRadius: '10px' }}> 
                 <Box sx={{ width: '100%' }}>
-                    <Typography variant='h5' sx={{ color: 'gray', fontWeight: 'bold' }}>Your Profile</Typography>
+                    {/* <Typography variant='h5' sx={{ color: 'gray', fontWeight: 'bold' }}>Your Profile</Typography> */}
                     <Grid container spacing={2} sx={{ width: '100%' }}>
                         <Grid item md={12}>
                             <Box sx={{ textAlign: 'center' }}>
-                                <Typography variant='h4'>{user.first_name + " " + user.last_name}</Typography>
+                                <Typography variant='h4'>Your Profile</Typography>
                                 <label style={{ color: 'red', fontStyle: 'italic' }}>{error}</label>
                             </Box>
                         </Grid>
@@ -254,18 +257,29 @@ function Profile() {
                             </Box>
                         </Grid>
                         <Grid item md={6}>
+                            <Box sx={{display: 'flex', fontWeight: 'bold', ml: 1}}>
+                                Loyaty Points: <Typography sx={{ml: 1, color: 'yellow'}}>{user.loyaty_points}</Typography>
+                            </Box>
                         </Grid>
                         <Grid item md={6}>
-                            <Box sx={{ mx: 1, textAlign: 'right' }}>
-                                <Button sx={{color: 'red'}} onClick={handleLogout}>Logout</Button>
-                                <Button><Link href="/profile">Reload</Link></Button>
-                                <Button onClick={() => setEditor(!editor)}>{editor ? "Cancel" : "Edit"}</Button>
+                            <Box sx={{ textAlign: 'right', display: 'flex' }}>
+                                <Divider orientation="vertical" flexItem />
+                                <Button sx={{color: 'red', mx: 1}} onClick={handleLogout}>Logout</Button>
+                                <Divider orientation="vertical" flexItem />
+                                <Button sx={{mx: 1}}><Link href="/profile">Reload</Link></Button>
+                                <Divider orientation="vertical" flexItem />
+                                <Button onClick={() => setEditor(!editor)} sx={{color: 'orange', mx: 1}}>{editor ? "Cancel" : "Edit"}</Button>
+                                <Divider orientation="vertical" flexItem />
                                 <Button disabled={!editor} onClick={editUser}>Save</Button>
-                                <Button onClick={handleOpenModel}>Change Password</Button>
+                                <Divider orientation="vertical" flexItem />
+                                <Button onClick={handleOpenModel} sx={{display: 'flex', width: '200px', mx: 1}}>Change Password</Button>
+                                <Divider orientation="vertical" flexItem />
                             </Box>
                         </Grid>
                     </Grid>
-                </Box>
+                    
+                    {/* <Link href="/" sx={{color: 'red'}}>Go to home page</Link> */}
+                </Box>   
             </Box>
 
             <Address />
@@ -288,6 +302,7 @@ function Profile() {
                         p: 4,
                         borderRadius: 3,
                     }}>
+                        <Typography variant='h4' sx={{textAlign: 'center', color: 'gray', fontWeight: 'bold', mb: 5}}>Change Password</Typography>
                     <Box>
                         <Typography variant="h6" component="h2">
                             Enter old password *
@@ -337,7 +352,7 @@ function Profile() {
                             <label style={{ color: 'red', fontStyle: 'italic' }}>{error}</label>
                         </Typography>
                         <Box sx={{ textAlign: 'right', mt: 5 }}>
-                            <Button onClick={changePassword}>Save Password</Button>
+                            <Button onClick={changePassword} variant='outlined'>Save Password</Button>
                         </Box>
                     </Box>
                 </Box>

@@ -21,9 +21,9 @@ const ContentHeader = {
 
     // navigation
     navbar: [
-        { title: 'Sale Off', link: '#' },
-        { title: 'Best Sellers', link: '#' },
-        { title: 'About Us', link: '#' },
+        // { title: 'Sale Off', link: '#' },
+        // { title: 'Best Sellers', link: '#' },
+        // { title: 'About Us', link: '#' },
     ],
 };
 

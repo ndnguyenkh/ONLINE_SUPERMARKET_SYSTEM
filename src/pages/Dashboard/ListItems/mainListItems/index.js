@@ -14,6 +14,8 @@ import LayersIcon from '@mui/icons-material/Layers';
 
 const MainListItems = () => {
 
+  const role = JSON.parse(localStorage.getItem('role'));
+
   const handleListItemClick = (path) => {
     window.location.href = (path);
   };
@@ -21,7 +23,66 @@ const MainListItems = () => {
   return (
     <React.Fragment>
 
-      <ListItemButton      
+      {role === 'WAREHOUSE_STAFFS' ? (
+        <>
+          <ListItemButton
+          onClick={() => handleListItemClick('/manage-categories')}
+        >
+          <ListItemIcon>
+            <BarChartIcon />
+          </ListItemIcon>
+          <ListItemText primary="Manage Categories" />
+        </ListItemButton>
+
+        <ListItemButton
+          onClick={() => handleListItemClick('/manage-products')}
+        >
+        <ListItemIcon>
+          <LayersIcon />
+        </ListItemIcon>
+        <ListItemText primary="Manage Products" />
+      </ListItemButton>
+
+      <ListItemButton
+          onClick={() => handleListItemClick('/seen-schedule')}
+        >
+        <ListItemIcon>
+          <LayersIcon />
+        </ListItemIcon>
+        <ListItemText primary="Schedule" />
+      </ListItemButton>
+        </>
+      ) : (
+        <></>
+       )}
+
+      {role === 'SELLER' ? (
+        <>
+          <ListItemButton
+        onClick={() => handleListItemClick('/manage-orders')}
+      >
+        <ListItemIcon>
+          <ShoppingCartIcon />
+        </ListItemIcon>
+        <ListItemText primary="Manage Orders" />
+      </ListItemButton>
+
+      <ListItemButton
+          onClick={() => handleListItemClick('/seen-schedule')}
+        >
+        <ListItemIcon>
+          <LayersIcon />
+        </ListItemIcon>
+        <ListItemText primary="Schedule" />
+      </ListItemButton>
+        </>
+      ) : (
+        <></>
+      )}
+
+      {role === 'ADMIN' ? (
+        <>
+        <ListItemButton      
         onClick={() => handleListItemClick('/dashboard')}
       >
         <ListItemIcon>
@@ -74,6 +135,20 @@ const MainListItems = () => {
         </ListItemIcon>
         <ListItemText primary="Manage Suppliers" />
       </ListItemButton>
+
+      <ListItemButton
+          onClick={() => handleListItemClick('/seen-schedule')}
+        >
+        <ListItemIcon>
+          <LayersIcon />
+        </ListItemIcon>
+        <ListItemText primary="Schedule" />
+      </ListItemButton>
+        </>
+      ) : (
+        <></>
+      )}
+      
 
     </React.Fragment>
   );

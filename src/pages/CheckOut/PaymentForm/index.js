@@ -27,11 +27,6 @@ import Loading from '~/components/containers/Loading';
 import { UserAPI } from '~/apis';
 
 
-const FormGrid = styled('div')(() => ({
-  display: 'flex',
-  flexDirection: 'column',
-}));
-
 export default function PaymentForm({total}) {
 
   // ui
@@ -167,7 +162,7 @@ export default function PaymentForm({total}) {
             <CardActionArea onClick={() => setPaymentType('creditCard')}>
               <CardContent sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                 <CreditCardRoundedIcon color="primary" fontSize="small" />
-                <Typography fontWeight="medium">NCB</Typography>
+                <Typography fontWeight="medium">VNPAY</Typography>
               </CardContent>
             </CardActionArea>
           </Card>

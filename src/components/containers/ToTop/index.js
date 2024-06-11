@@ -41,34 +41,6 @@ function ToTop() {
 
     return ( 
         <Box sx={{position: 'relative'}}>
-            {/* <Tooltip title={'Chat With AI'}>
-                <SpeedDial
-                    ariaLabel="SpeedDial basic example"
-                    sx={{
-                        position: 'fixed',
-                        bottom: 88,
-                        right: 16,
-                        color: 'white',
-                        transition: 'transform 0.2s ease-out',
-                        transform: isSpeedDialOpen ? 'translateY(0)' : 'translateY(100%)',
-                    }}
-                    icon={
-                        // <ChatOutlinedIcon 
-                        //     sx={{
-                        //         width: '70%', 
-                        //         height: '70%',                       
-                        //         borderRadius: '10%', 
-                        //     }}
-                        // />
-                        // <Chat />
-                    }
-                    onClick={() => {
-
-                    }}
-                    direction="up"
-                    >
-                </SpeedDial>
-            </Tooltip>  */}
             <Tooltip title={'Click To Top'}>
                 <SpeedDial
                     ariaLabel="SpeedDial basic example"
@@ -80,7 +52,7 @@ function ToTop() {
                         transition: 'transform 0.2s ease-out',
                         transform: isSpeedDialOpen ? 'translateY(0)' : 'translateY(100%)',
                     }}
-                    icon={<ArrowUpwardIcon sx={{width: '100%', height: '100%', borderRadius: '10%', backgroundColor: 'black'}}/>}
+                    icon={<ArrowUpwardIcon sx={{width: '100%', height: '100%', borderRadius: '50%', backgroundColor: 'black'}}/>}
                     open={isSpeedDialOpen}
                     onClick={() => {
                         setIsSpeedDialOpen(!isSpeedDialOpen)

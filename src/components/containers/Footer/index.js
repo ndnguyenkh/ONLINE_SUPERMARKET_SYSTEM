@@ -53,7 +53,7 @@ function Footer() {
                         })}
                     </Container>
                 </Box>
-                <Typography sx={{textAlign: 'center', mt: 3}}>© 2024 ONMART - Tous droits de propriété intellectuelle réservés</Typography>
+                <Typography sx={{textAlign: 'center', mt: 3}}>© {new Date().getFullYear()} <br />OnMart Team Productions<br /> All Rights Reserved <br />© Copyright by OnMart </Typography>
             </Container>
         </Box>
      );

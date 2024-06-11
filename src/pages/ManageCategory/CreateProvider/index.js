@@ -23,7 +23,7 @@ function CreateProvider({valueTab}) {
 
     const handleImageChange = (e) => {
         setImage(e.target.files[0]);
-      };
+    };
 
     const addCategory = async () => {
         const formData = new FormData();

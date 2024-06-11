@@ -27,7 +27,7 @@ function Info({ totalPrice, products }) {
     {
       name: 'Professional plan',
       desc: 'Shipping fee costs',
-      price: 'free',
+      price: 30000,
     },
   ];  
 
@@ -60,7 +60,7 @@ function Info({ totalPrice, products }) {
         Total
       </Typography>
       <Typography variant="h4" gutterBottom>
-        {totalPrice.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })}
+        {(totalPrice+30000).toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })}
       </Typography>
       <List disablePadding>
         {productss.map((product) => (

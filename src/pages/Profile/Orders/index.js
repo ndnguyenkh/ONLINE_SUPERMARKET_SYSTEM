@@ -76,6 +76,14 @@ const Orders = () => {
         searchValue === "" || order.state.toLowerCase().includes(searchValue.toLowerCase())
     );
 
+    const check = (order) => {
+        if(order.state == "PLACED" || order.state == "DELIVERED") {
+            return true;
+        }else {
+            return false;
+        }
+    };
+
     return (
         <Box sx={{ display: 'flex', justifyContent: 'center' }}>
             <Box>
@@ -142,7 +150,7 @@ const Orders = () => {
                                             </ol>
                                         </TableCell>
                                         <TableCell align="center">
-                                            <Button onClick={() => handleOpenModal(order)}>Customize orders</Button>
+                                            <Button onClick={() => handleOpenModal(order)} sx={{display: order.state === 'PLACED' || order.state === 'DELIVERED' ? "block" : "none"}}>Customize orders</Button>
                                         </TableCell>
                                     </TableRow>
                                 ))}
@@ -175,10 +183,10 @@ const Orders = () => {
                                         {error}
                                     </Typography>
                                 )}
-                                <Box sx={{ textAlign: 'center', mt: 5 }}>
+                                <Box sx={{ textAlign: 'center', mt: 5, display: selectedOrder.state === 'DELIVERED' ? 'block' : 'none' }}>
                                     <Button onClick={() => handleChangeState("RECEIVED", selectedOrder.id)}>RECEIVED</Button>
                                 </Box>
-                                <Box sx={{ textAlign: 'center', mt: 5 }}>
+                                <Box sx={{ textAlign: 'center', mt: 5, display: selectedOrder.state === 'PLACED' ? 'block' : 'none'}}>
                                     <Button onClick={() => handleChangeState("CANCELED", selectedOrder.id)}>CANCELED</Button>
                                 </Box>
                             </Box>

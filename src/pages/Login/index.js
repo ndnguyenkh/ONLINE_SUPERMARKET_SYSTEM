@@ -61,7 +61,7 @@ function Login() {
             return false;
         }
         // Kiểm tra password có ít nhất một chữ hoa, một con số, một kí tự đặc biệt
-        const passwordRegex = /^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]+$/;
+        const passwordRegex = /^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&+#])[A-Za-z\d@$!%*?&+#]{6,}$/;
         if (!passwordRegex.test(password)) {
             setErrorPassword('Password must contain at least one uppercase letter, one digit, and one special character');
             console.log('Password must contain at least one uppercase letter, one digit, and one special character');
@@ -149,18 +149,9 @@ function Login() {
         } catch (error) {
             // Xử lý lỗi
             if (error.response) {
-                if (error.response.status === 406) {
-                    setErrorEmail(error.response.data.errors);
+                if (error.response.status === 401) {
+                    setErrorEmail('wrong password or account');
                   console.error('Error 406:', error.response.data.errors);
-                } else {
-                  console.error('Error response:', error.response.data);
-                }
-                const errors = error.response.data.errors;
-                // Cập nhật trạng thái lỗi
-                if (errors) {
-                  setGeneralError(errors.join(', '));
-                } else {
-                  setGeneralError('An unknown error occurred.');
                 }
             } else {
                 console.error('Error message:', error.message);

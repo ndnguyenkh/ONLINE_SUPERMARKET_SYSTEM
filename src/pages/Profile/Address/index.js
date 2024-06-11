@@ -57,6 +57,7 @@ function Address() {
                 alert("Edit Address Success!");
                 getAddress(); // Fetch updated address list
             } catch (err) {
+                alert("failed action! Please check and try again!");
                 console.log("update Address: " + err.message);
             } finally {
                 setLoading(false);
@@ -84,6 +85,7 @@ function Address() {
                 alert("Create Address Success!");
                 getAddress(); // Fetch updated address list
             } catch (err) {
+                alert("failed action! Please check and try again!");
                 console.log("Create Address: " + err.message);
             } finally {
                 setLoading(false);
@@ -104,6 +106,7 @@ function Address() {
             alert("Deleted Address Success!");
             setAddress(address.filter((addr) => addr.id !== id)); // Update address list
         } catch (err) {
+            alert("failed action! Please check and try again!");
             console.log("Deleted Address: " + err.message);
         } finally {
             setLoading(false);
@@ -111,12 +114,31 @@ function Address() {
     };
 
     const setEdit = (addressData) => {
+        setEditor(!editor); // Enable editor mode
         setId(addressData.id);
         setWard(addressData.ward);
         setProvince(addressData.province);
         setCity(addressData.city); // Nếu city có trong phản hồi
-        setSpecificAddress(addressData.specific_address);
-        setEditor(true); // Enable editor mode
+        setSpecificAddress(addressData.specific_address);    
+    };
+
+    // set default
+    const setDefault = async (id) => {
+        setLoading(true);
+        try {
+            await axios.put(`http://localhost:9090/api/v1/account/addresses/${id}/default`, {} ,{
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${jwt}`
+                }
+            })
+            getAddress();
+            alert("Success!");
+        } catch (err) {
+            alert("failed action! Please check and try again!");
+        } finally {
+            setLoading(false);
+        }
     };
 
     useEffect(() => {
@@ -151,10 +173,11 @@ function Address() {
         <Box>
             <Box sx={{ display: 'flex', mx: 40, mt: 10, justifyContent: 'center', border: '1px solid gray', borderRadius: '10px' }}>
                 <Box sx={{ width: '100%' }}>
-                    <Typography variant='h5' sx={{ color: 'gray', fontWeight: 'bold' }}>Your Address</Typography>
+                    {/* <Typography variant='h5' sx={{ color: 'gray', fontWeight: 'bold' }}>Your Address</Typography> */}
                     <Grid container spacing={2} sx={{ width: '100%' }}>
                         <Grid item md={12}>
                             <Box sx={{ textAlign: 'center' }}>
+                                
                                 <Typography variant='h4'>Address</Typography>
                                 <label style={{ color: 'red', fontStyle: 'italic' }}>{error}</label>
                             </Box>
@@ -204,8 +227,10 @@ function Address() {
                         <Grid item md={6}>
                             <Box sx={{ mx: 1, textAlign: 'right' }}>
                                 <Button><Link href="/profile">Reload</Link></Button>
-                                <Button onClick={() => setEditor(!editor)}>{editor ? "Cancel" : "Edit"}</Button>
-                                <Button onClick={createAddressUser} disabled={address.length === 0 ? false : true}>Create</Button>
+                                <Button onClick={() => setEditor(!editor)} disabled={editor ? false : true}>Cancel</Button>
+                                <Button onClick={createAddressUser} >Create</Button>
+                                {/* disabled={address.length === 0 ? false : true} */}
+                                
                                 <Button disabled={!editor} onClick={() => editAddressUser()}>Save</Button>
                             </Box>
                         </Grid>
@@ -233,9 +258,13 @@ function Address() {
                                         <TableCell align="center">{row.province}</TableCell>
                                         <TableCell align="center">{row.city}</TableCell>
                                         <TableCell align="center">{row.specific_address}</TableCell>
-                                        <TableCell align="center">
-                                            <Button onClick={() => setEdit(row)}>Edit</Button>
-                                            <Button onClick={() => removeAddressUser(row.id)}>Delete</Button>
+                                        <TableCell align="center" >
+                                            <Box sx={{display: 'flex'}}>    
+                                                <Button onClick={() => setEdit(row)}>Edit</Button>
+                                                <Button onClick={() => removeAddressUser(row.id)}>Delete</Button>
+                                                <Button sx={{display: row.is_default ? "none" : 'flex'}} onClick={() => setDefault(row.id)}>Set Default</Button>
+                                            </Box>
+                                            
                                         </TableCell>
                                     </TableRow>
                                 ))}

@@ -32,34 +32,39 @@ const defaultTheme = createTheme();
 
 function Dashboard() {
 
-  const [role, setRole] = useState('');
+  // const [role, setRole] = useState('');
   // chuyển hướng page theo roles
   const getRedirectPath = (authority) => {
     switch (authority) {
       case 'CUSTOMER': {
         return window.location.href = ('/profile');
       }
-      case 'ADMIN':
+      case 'ADMIN': 
       case 'WAREHOUSE_STAFFS':
       case 'SELLER':
-        return window.location.href = ('/dashboard');
-      default:
+        window.location.href = ('/dashboard');
+        break;
+      default: {
         return window.location.href = ('/login'); // Hoặc trang khác nếu không xác định được vai trò
+      }
+        
     }
 };
 
   useEffect(() => {
-    //setRole(JSON.parse(localStorage.getItem('role')));
-    //getRedirectPath(role);
+    // const role = JSON.parse(localStorage.getItem('role'));
+    // // setRole(JSON.parse(localStorage.getItem('role')));
+    // getRedirectPath(role);
 
   }, []);
 
   return (
     <ThemeProvider theme={defaultTheme}>
       <Box sx={{ display: 'flex' }}>
-
+      <Toolbar />
+        <Typography sx={{mt: 20, textAlign: 'center'}} variant='h4' >Welcome to OnMart manage page</Typography>
         {/* content page */}
-        <Box
+        {/* <Box
             //className='heloo'
           component="main"
           sx={{
@@ -72,12 +77,13 @@ function Dashboard() {
             overflow: 'auto',
           }}
         >
-          <Toolbar />
+          
+          <Orders />
           <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
-            <Grid container spacing={3}>
+            <Grid container spacing={3}> */}
 
               {/* Chart today*/}
-              <Grid item xs={12} md={8} lg={9}>
+              {/* <Grid item xs={12} md={8} lg={9}>
                 <Paper
                   sx={{
                     p: 2,
@@ -88,10 +94,10 @@ function Dashboard() {
                 >
                   <Chart />
                 </Paper>
-              </Grid>
+              </Grid> */}
 
               {/* Recent Deposits */}
-              <Grid item xs={12} md={4} lg={3}>
+              {/* <Grid item xs={12} md={4} lg={3}>
                 <Paper
                   sx={{
                     p: 2,
@@ -102,18 +108,19 @@ function Dashboard() {
                 >
                   <Deposits />
                 </Paper>
-              </Grid>
+              </Grid> */}
 
               {/* Recent Orders */}
-              <Grid item xs={12}>
+              {/* <Grid item md={12}>
                 <Paper sx={{ p: 2, display: 'flex', flexDirection: 'column' }}>
-                  <Orders />
+                  
                 </Paper>
-              </Grid>
-            </Grid>
+              </Grid> */}
+              
+            {/* </Grid>
             <Copyright sx={{ pt: 4 }} />
-          </Container>
-        </Box>
+          </Container> */}
+        {/* </Box> */}
 
       </Box>
     </ThemeProvider>
